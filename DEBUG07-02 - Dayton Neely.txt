@@ -1,0 +1,84 @@
+// The two senior class homerooms at Littleville High School
+// are having a fundraising drive for the prom. Each time a student
+// solicits a contribution, a record is created with the
+// student's name and the value. Two files have been created for
+// Homeroom A and Homeroom B. Each file is sorted in contribution
+// value order from highest to lowest. This program merges the two files.
+//
+// Debugged by: Dayton Neely
+// Corrections:
+//  1. mergedFile declared as OutputFile (it was an InputFile,
+//     but the program writes to it).
+//  2. The files are sorted highest to lowest, so the end-of-file
+//     marker must be LOWER than any real value. HIGH_VALUE = 999999
+//     replaced with LOW_VALUE = -1; otherwise a finished file's
+//     marker would be written ahead of real records.
+//  3. detailLoop(): when roomAValue is larger, write Room A's record
+//     and read from Room A (it wrote Room B's record instead).
+//     Otherwise write Room B's record and read from Room B.
+//  4. detailLoop(): added a call to checkBoth() so bothFilesDone can
+//     become "Y" (without it the loop never ended).
+//  5. allDone(): "mergeFile" fixed to "mergedFile".
+start
+   Declarations
+      string roomAName
+      num roomAValue
+      string roomBName
+      num roomBValue
+      string bothFilesDone = "N"
+      num LOW_VALUE = -1
+      InputFile roomAFile
+      InputFile roomBFile
+      OutputFile mergedFile
+   getReady()
+   while bothFilesDone = "N"
+      detailLoop()
+   endwhile
+   allDone()
+stop
+
+getReady()
+   open roomAFile "roomAFile.dat"
+   open roomBFile "roomBFile.dat"
+   open mergedFile "mergedFile.dat"
+   readA()
+   readB()
+   checkBoth()
+return
+
+readA()
+   input roomAName, roomAValue from roomAFile
+   if eof then
+      roomAValue = LOW_VALUE
+   endif
+return
+
+readB()
+   input roomBName, roomBValue from roomBFile
+   if eof then
+      roomBValue = LOW_VALUE
+   endif
+return
+
+checkBoth()
+   if roomAValue = LOW_VALUE AND roomBValue = LOW_VALUE then
+      bothFilesDone = "Y"
+   endif
+return
+
+detailLoop()
+   if roomAValue > roomBValue then
+      output roomAName, roomAValue to mergedFile
+      readA()
+   else
+      output roomBName, roomBValue to mergedFile
+      readB()
+   endif
+   checkBoth()
+return
+
+allDone()
+   close roomAFile
+   close roomBFile
+   close mergedFile
+return
